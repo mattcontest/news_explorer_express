@@ -1,6 +1,7 @@
 const bcrypt = require("bcryptjs");
 const User = require("../models/user");
-const { default: mongoose } = require("mongoose");
+const jwt = require("jsonwebtoken");
+const { JWT_SECRET } = require("../utils/config");
 
 const createUser = (req, res, next) => {
   const { name, email, password } = req.body;
@@ -52,4 +53,29 @@ const getCurrentUser = (req, res, next) => {
     });
 };
 
-module.exports = { createUser, getCurrentUser };
+const login = (req, res, next) => {
+  const { email, password } = req.body;
+  if (!email || !password) {
+    return res
+      .status(400)
+      .send({ message: "Both email and password are required!" });
+  }
+
+  return User.findUserByCredentials(email, password)
+    .then((user) => {
+      const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
+        expiresIn: "7d",
+      });
+      return res.status(200).send({ token });
+    })
+    .catch((err) => {
+      if (err.message.includes("Incorrect email or password")) {
+        return res
+          .status(401)
+          .send({ message: "Incorrect email or password ~ 401" });
+      }
+      // next(err)
+    });
+};
+
+module.exports = { createUser, getCurrentUser, login };
