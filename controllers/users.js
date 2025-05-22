@@ -34,6 +34,11 @@ const createUser = (req, res, next) => {
 };
 
 const getCurrentUser = (req, res, next) => {
+  if (!req.user) {
+    return res
+      .status(401)
+      .send({ message: "Authorization required, first log in" });
+  }
   const { _id: userId } = req.user;
   console.log("req.user", req.user);
   console.log("Req.params current user", userId);

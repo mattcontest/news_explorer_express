@@ -1,11 +1,19 @@
 const Article = require("../models/article");
 
 const getArticles = (req, res, next) => {
+  if (!req.user) {
+    return res
+      .status(401)
+      .send({ message: "Not logged in, please log in first!" });
+  }
+  console.log(req.user);
   const currentUser = req.user._id;
+
   Article.find({ owner: currentUser })
+    .populate("owner")
     .then((article) => res.status(200).send({ data: article }))
     .catch((err) => {
-      return res.status(404).send({ message: "404 Articels not found" });
+      return res.status(500).send({ message: "404 Articels not found" });
     });
 };
 
