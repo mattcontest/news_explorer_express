@@ -58,7 +58,7 @@ const deleteArticle = (req, res, next) => {
     .catch((err) => console.error(err));
 };
 
-const likeItem = (req, res, next) => {
+const likeArticle = (req, res, next) => {
   const { itemId } = req.params;
   Article.findByIdAndUpdate(
     itemId,
@@ -78,7 +78,7 @@ const likeItem = (req, res, next) => {
     });
 };
 
-const dislikeItem = (req, res, next) => {
+const dislikeArticle = (req, res, next) => {
   const { itemId } = req.params;
   if (!mongoose.Types.ObjectId.isValid(itemId)) {
     return res.status(400).send({ message: "Bad Request: Invalid Format" });
@@ -109,4 +109,10 @@ const dislikeItem = (req, res, next) => {
         .send({ message: "500 Server Error when deleting an  Item" });
     });
 };
-module.exports = { getArticles, createArticle, deleteArticle };
+module.exports = {
+  getArticles,
+  createArticle,
+  deleteArticle,
+  likeArticle,
+  dislikeArticle,
+};
