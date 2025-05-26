@@ -3,6 +3,22 @@ const User = require("../models/user");
 const jwt = require("jsonwebtoken");
 const { JWT_SECRET } = require("../utils/config");
 
+const getUsers = (req, res, next) => {
+  // if (!req.user) {
+  //   return res.status(401).send({ message: "Authorization required" });
+  // }
+  User.find({})
+    .then((users) => {
+      res.send(users);
+    })
+    .catch((err) => {
+      console.error(err);
+      return res.status(500).send({
+        message: "500 Server Error when attempting downloading users",
+      });
+    });
+};
+
 const createUser = (req, res, next) => {
   const { name, email, password } = req.body;
   console.log("Req.body", name, email);
@@ -83,4 +99,4 @@ const login = (req, res, next) => {
     });
 };
 
-module.exports = { createUser, getCurrentUser, login };
+module.exports = { createUser, getCurrentUser, login, getUsers };

@@ -1,6 +1,8 @@
+const cors = require("cors");
 const express = require("express");
 const mongoose = require("mongoose");
 const indexRouter = require("./routes/index");
+const { limiter } = require("./middlewares/express-limiter");
 
 const app = express();
 const { PORT = 3000 } = process.env;
@@ -15,7 +17,11 @@ mongoose
     console.error(err);
   });
 
+app.use(cors());
+
 app.use(express.json());
+
+app.use(limiter);
 
 app.use("/", indexRouter);
 
