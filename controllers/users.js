@@ -87,7 +87,13 @@ const login = (req, res, next) => {
       const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
         expiresIn: "7d",
       });
-      return res.status(200).send({ token });
+      console.log("Sending", {
+        token,
+        name: user.name,
+        email: user.email,
+        _id: user._id,
+      });
+      res.send({ token, name: user.name, email: user.email, _id: user._id });
     })
     .catch((err) => {
       if (err.message.includes("Incorrect email or password")) {
