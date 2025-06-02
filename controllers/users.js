@@ -93,14 +93,23 @@ const login = (req, res, next) => {
         email: user.email,
         _id: user._id,
       });
-      res.send({ token, name: user.name, email: user.email, _id: user._id });
+      res.send({
+        token,
+        name: user.name,
+        email: user.email,
+        _id: user._id,
+      });
     })
     .catch((err) => {
+      console.error("Login error:", err);
+
       if (err.message.includes("Incorrect email or password")) {
         return res
           .status(401)
           .send({ message: "Incorrect email or password ~ 401" });
       }
+
+      return res.status(500).send({ message: "Server error during login" });
       // next(err)
     });
 };
