@@ -7,10 +7,11 @@ module.exports = (req, res, next) => {
     return res.status(401).send({ message: "Authorization required!" });
   }
 
-  const token = authorization.replace("Bearer", "");
+  const token = authorization.replace("Bearer ", "");
   let payload;
   // console.log("Check paylaod", payload)
 
+  console.log("PAYLOAD", token, JWT_SECRET);
   try {
     payload = jwt.verify(token, JWT_SECRET);
   } catch (err) {
