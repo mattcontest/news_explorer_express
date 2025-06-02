@@ -109,7 +109,9 @@ const login = (req, res, next) => {
           .send({ message: "Incorrect email or password ~ 401" });
       }
 
-      return res.status(500).send({ message: "Server error during login" });
+      return res
+        .status(500)
+        .send({ message: "Server error during login", error: err.message });
       // next(err)
     });
 };
