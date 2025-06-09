@@ -2,6 +2,8 @@ const { default: mongoose } = require("mongoose");
 const Article = require("../models/article");
 
 const getArticles = (req, res, next) => {
+  console.log("Check req.user from getArticles", req.user);
+  console.log("Check req.route from getArticles", req.route);
   if (!req.user) {
     return res
       .status(401)
@@ -19,26 +21,37 @@ const getArticles = (req, res, next) => {
 };
 
 const createArticle = (req, res, next) => {
-  const { keyword, title, date, source, link, image } = req.body;
+  const { keyword, title, date, source, link, image, text } = req.body;
   const owner = req.user._id;
-  Article.create({
-    keyword,
-    title,
-    date,
-    source,
-    link,
-    image,
-  }).then((article) =>
-    res
-      .status(201)
-      .send({ data: article })
-      .catch((err) => {
-        console.error(err);
-        if (err.name === "ValidationError") {
-          res.status(400).send({ message: "Invalid data" });
-        }
-      })
-  );
+  console.log("red.user._id", owner);
+
+  Article.findOne({ link, owner })
+    .then((existingArticle) => {
+      if (existingArticle) {
+        return res
+          .status(409)
+          .send({ message: "Article already saved in your Bookmarks!" });
+      }
+      return Article.create({
+        keyword,
+        title,
+        date,
+        source,
+        link,
+        image,
+        text,
+        owner,
+      }).then((article) => res.status(201).send({ data: article }));
+    })
+
+    .catch((err) => {
+      console.error(err);
+      if (err.name === "ValidationError") {
+        return res.status(400).send({ message: "Invalid data" });
+      }
+
+      return res.status(500).send({ message: "Internal server error" });
+    });
 };
 
 const deleteArticle = (req, res, next) => {
@@ -60,6 +73,11 @@ const deleteArticle = (req, res, next) => {
 
 const likeArticle = (req, res, next) => {
   const { itemId } = req.params;
+  const userId = req.user._id;
+
+  console.log(req.body);
+  //First check what the req.body returns
+  // const {id, source, title, date, description, image, keywords} = req.body;
   Article.findByIdAndUpdate(
     itemId,
     { $addToSet: { likes: req.user._id } },
