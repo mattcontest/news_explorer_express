@@ -7,7 +7,7 @@ const {
 const auth = require("../middlewares/auth");
 
 console.log("🛡️ Auth Middleware triggered");
-router.use(auth);
 router.get("/", getUsers);
+router.use(auth);
 router.get("/me", getCurrentUser);
 module.exports = router;

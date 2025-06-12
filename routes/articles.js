@@ -15,6 +15,6 @@ router.delete("/:articleId", deleteArticle);
 router.put("/:articleId/likes", likeArticle);
 //But instead this?
 router.post("/", createArticle);
-router.delete("/:articleId/likes", dislikeArticle);
+// router.delete("/:articleId/likes", dislikeArticle);
 
 module.exports = router;

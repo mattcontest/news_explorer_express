@@ -55,7 +55,8 @@ const createArticle = (req, res, next) => {
 };
 
 const deleteArticle = (req, res, next) => {
-  const [articleId] = req.params;
+  const articleId = req.params.articleId;
+  console.log("ArticleId", articleId);
   Article.findOne({ _id: articleId })
     .orFail()
     .then((article) => {
@@ -64,11 +65,22 @@ const deleteArticle = (req, res, next) => {
           .status(403)
           .send({ message: "Unauthorized to delete this article" });
       }
+
+      return Article.deleteOne({ _id: articleId })
+        .orFail()
+        .then(() => {
+          res.status(200).send({ data: article });
+        });
+    })
+    .catch((err) => {
+      console.error("Error deleting article", err);
+      res.status(500).send({ message: "Server error during article deletion" });
     });
-  return Article.deleteOne({ _id: articleId })
-    .orFail()
-    .then(() => res.status(200).send({ data: article }))
-    .catch((err) => console.error(err));
+
+  // return Article.deleteOne({ _id: articleId })
+  //   .orFail()
+  //   .then(() => res.status(200).send({ data: article }))
+  //   .catch((err) => console.error(err));
 };
 
 const likeArticle = (req, res, next) => {
