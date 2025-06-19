@@ -2,10 +2,13 @@ const winston = require("winston");
 const expressWinston = require("express-winston");
 const messageFormat = winston.format.combine(
   winston.format.timestamp(),
-  winston.format.printf(
-    ({ level, message, meta, timestamp }) =>
-      `${timestamp} ${level} : ${meta.error?.stack || meta}`
-  )
+  winston.format.printf(({ level, message, meta, timestamp }) => {
+    const method = meta?.req?.method;
+    const url = meta?.req?.originalUrl;
+    const statusCode = meta?.res?.statusCode;
+    const metaInfo = typeof meta === "object" ? JSON.stringify(meta) : meta;
+    return `FULL LOG META ${timestamp} ${level} : ${method} ${url} ${statusCode}`;
+  })
 );
 
 const requestLogger = expressWinston.logger({

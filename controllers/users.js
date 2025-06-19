@@ -59,9 +59,18 @@ const getCurrentUser = (req, res, next) => {
   console.log("req.user", req.user);
   console.log("Req.params current user", userId);
   User.findById(userId)
-    .orFail()
-    .then((user) => res.status(200).send(user))
+    // .orFail()
+    .then((user) => {
+      if (!user) {
+        return res.status(404).send({ message: "User not found" });
+      }
+      return res.status(200).send(user);
+    })
     .catch((err) => {
+      // if (res.headerSent) {
+      //   return;
+      // }
+
       if (err.name === "CastError") {
         return res
           .status(400)
