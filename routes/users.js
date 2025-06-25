@@ -1,9 +1,5 @@
 const router = require("express").Router();
-const {
-  getCurrentUser,
-  createUser,
-  getUsers,
-} = require("../controllers/users");
+const { getCurrentUser, getUsers } = require("../controllers/users");
 const auth = require("../middlewares/auth");
 
 console.log("🛡️ Auth Middleware triggered");
