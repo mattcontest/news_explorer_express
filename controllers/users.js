@@ -1,6 +1,6 @@
+const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const User = require("../models/user");
-const jwt = require("jsonwebtoken");
 const { JWT_SECRET } = require("../utils/config");
 
 const getUsers = (req, res, next) => {
@@ -37,7 +37,7 @@ const createUser = (req, res, next) => {
         return res.status(409).send({ message: "Email already used" });
       }
 
-      if (err.name == "ValidationError") {
+      if (err.name === "ValidationError") {
         return res
           .status(400)
           .send({ message: "400 Bad Request when creating a user" });
@@ -58,29 +58,32 @@ const getCurrentUser = (req, res, next) => {
   const { _id: userId } = req.user;
   console.log("req.user", req.user);
   console.log("Req.params current user", userId);
-  User.findById(userId)
-    // .orFail()
-    .then((user) => {
-      if (!user) {
-        return res.status(404).send({ message: "User not found" });
-      }
-      return res.status(200).send(user);
-    })
-    .catch((err) => {
-      // if (res.headerSent) {
-      //   return;
-      // }
+  return (
+    User.findById(userId)
+      // .orFail()
+      .then((user) => {
+        if (!user) {
+          return res.status(404).send({ message: "User not found" });
+        }
+        return res.status(200).send(user);
+      })
 
-      if (err.name === "CastError") {
+      .catch((err) => {
+        // if (res.headerSent) {
+        //   return;
+        // }
+
+        if (err.name === "CastError") {
+          return res
+            .status(400)
+            .send({ message: `Bad Request  -- Cast Error when getUserById` });
+        }
+
         return res
-          .status(400)
-          .send({ message: `Bad Request  -- Cast Error when getUserById` });
-      }
-
-      return res
-        .status(500)
-        .send({ message: "500 Server Error when attempting to getUserById" });
-    });
+          .status(500)
+          .send({ message: "500 Server Error when attempting to getUserById" });
+      })
+  );
 };
 
 const login = (req, res, next) => {
