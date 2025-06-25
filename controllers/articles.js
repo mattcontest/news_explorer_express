@@ -12,12 +12,10 @@ const getArticles = (req, res, next) => {
   console.log(req.user);
   const currentUser = req.user._id;
 
-  Article.find({ owner: currentUser })
+  return Article.find({ owner: currentUser })
     .populate("owner")
     .then((article) => res.status(200).send({ data: article }))
-    .catch((err) => {
-      return res.status(500).send({ message: "404 Articels not found" });
-    });
+    .catch(() => res.status(500).send({ message: "404 Articels not found" }));
 };
 
 const createArticle = (req, res, next) => {
@@ -55,12 +53,12 @@ const createArticle = (req, res, next) => {
 };
 
 const deleteArticle = (req, res, next) => {
-  const articleId = req.params.articleId;
+  const { articleId } = req.params;
   console.log("ArticleId", articleId);
   Article.findOne({ _id: articleId })
     .orFail()
     .then((article) => {
-      if (article.owner.toString() != req.user._id) {
+      if (article.owner.toString() !== req.user._id) {
         res
           .status(403)
           .send({ message: "Unauthorized to delete this article" });
@@ -85,26 +83,30 @@ const deleteArticle = (req, res, next) => {
 
 const likeArticle = (req, res, next) => {
   const { itemId } = req.params;
-  const userId = req.user._id;
+  // const userId = req.user._id;
 
   console.log(req.body);
-  //First check what the req.body returns
-  // const {id, source, title, date, description, image, keywords} = req.body;
+  //  First check what the req.body returns
+  //  const {id, source, title, date, description, image, keywords} = req.body;
   Article.findByIdAndUpdate(
     itemId,
     { $addToSet: { likes: req.user._id } },
     { new: true }
   )
-    .orFail(() => {
-      return res.status(404).send({ message: "Not exisisting id in the db" });
-    })
+    .orFail(() =>
+      res.status(404).send({ message: "Not exisisting id in the db" })
+    )
     .populate("owner")
     .then((updatedItem) => res.status(200).json(updatedItem))
     .catch((err) => {
       console.log("Check error", err);
-      if (err.statusCode == 404) {
+      if (err.statusCode === 404) {
         return res.status(404).send({ message: "Not found in the db" });
       }
+
+      return res
+        .status(500)
+        .send({ message: "Server Error while liking article" });
     });
 };
 
