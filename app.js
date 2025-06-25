@@ -13,7 +13,7 @@ mongoose
   .connect("mongodb://127.0.0.1:27017/newsexplorer_db")
 
   .then((data) => {
-    console.log("Connected to the DB!");
+    console.log("Connected to the DB!", data);
   })
   .catch((err) => {
     console.error(err);
@@ -28,11 +28,12 @@ app.use(
 app.use(express.json());
 
 app.use(limiter);
-//Enabling the Request Logger
+//  Enabling the Request Logger
+
 app.use(requestLogger);
 
 app.use("/", indexRouter);
-// Enabling the error logger
+//  Enabling the error logger
 app.use(errorLogger);
 
 app.listen(PORT, () => {
