@@ -7,13 +7,13 @@ const { limiter } = require("./middlewares/express-limiter");
 const { requestLogger, errorLogger } = require("./middlewares/logger");
 
 const app = express();
-const { PORT = 3001 } = process.env;
+const { PORT = 3000 } = process.env;
 
 mongoose
   .connect("mongodb://127.0.0.1:27017/newsexplorer_db")
 
-  .then((data) => {
-    console.log("Connected to the DB!", data);
+  .then(() => {
+    console.log("Connected to the DB!");
   })
   .catch((err) => {
     console.error(err);
