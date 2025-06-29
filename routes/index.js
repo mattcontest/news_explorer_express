@@ -3,6 +3,10 @@ const userRouter = require("./users");
 const articleRouter = require("./articles");
 // const newsRoutes = require("./routes/news");
 const { login, createUser } = require("../controllers/users");
+const {
+  validateLogin,
+  validateUserBody,
+} = require("../middlewares/validation");
 
 // router.get("/crash-test", () => {
 //   setTimeout(() => {
@@ -10,8 +14,9 @@ const { login, createUser } = require("../controllers/users");
 //   }, 0);
 // });
 
-router.post("/signin", login);
-router.post("/signup", createUser);
+// router.post("/signin", login);
+router.post("/signin", validateLogin, login);
+router.post("/signup", validateUserBody, createUser);
 router.use("/users", userRouter);
 router.use("/articles", articleRouter);
 // router.use("/api", newsRoutes);

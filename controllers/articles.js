@@ -59,7 +59,7 @@ const deleteArticle = (req, res, next) => {
     .orFail()
     .then((article) => {
       if (article.owner.toString() !== req.user._id) {
-        res
+        return res
           .status(403)
           .send({ message: "Unauthorized to delete this article" });
       }
@@ -72,13 +72,19 @@ const deleteArticle = (req, res, next) => {
     })
     .catch((err) => {
       console.error("Error deleting article", err);
+
+      if (err.name === "CastError") {
+        return res.status(400).send({ message: "Invalid Article Parameter" });
+      }
+
+      if (err.name === "DocumentNotFoundError") {
+        return res
+          .status(404)
+          .send({ message: "Article to delete Not Found ~ 404" });
+      }
+
       res.status(500).send({ message: "Server error during article deletion" });
     });
-
-  // return Article.deleteOne({ _id: articleId })
-  //   .orFail()
-  //   .then(() => res.status(200).send({ data: article }))
-  //   .catch((err) => console.error(err));
 };
 
 const likeArticle = (req, res, next) => {

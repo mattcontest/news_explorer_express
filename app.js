@@ -5,6 +5,7 @@ const mongoose = require("mongoose");
 const indexRouter = require("./routes/index");
 const { limiter } = require("./middlewares/express-limiter");
 const { requestLogger, errorLogger } = require("./middlewares/logger");
+const { errors } = require("celebrate");
 
 const app = express();
 const { PORT = 3000 } = process.env;
@@ -35,6 +36,9 @@ app.use(requestLogger);
 app.use("/", indexRouter);
 //  Enabling the error logger
 app.use(errorLogger);
+
+// Checking validation errors
+app.use(errors());
 
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}`);
