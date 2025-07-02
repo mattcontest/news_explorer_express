@@ -6,12 +6,13 @@ const indexRouter = require("./routes/index");
 const { limiter } = require("./middlewares/express-limiter");
 const { requestLogger, errorLogger } = require("./middlewares/logger");
 const { errors } = require("celebrate");
+const errorHandler = require("./middlewares/error-handler");
 
 const app = express();
-const { PORT = 3000 } = process.env;
+const { PORT = 3000, MONGO_URI } = process.env;
 
 mongoose
-  .connect("mongodb://127.0.0.1:27017/newsexplorer_db")
+  .connect(MONGO_URI)
 
   .then(() => {
     console.log("Connected to the DB!");
@@ -39,6 +40,9 @@ app.use(errorLogger);
 
 // Checking validation errors
 app.use(errors());
+
+// Centralized Error Hanlder
+app.use(errorHandler);
 
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}`);
