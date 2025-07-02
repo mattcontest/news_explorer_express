@@ -2,6 +2,10 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const User = require("../models/user");
 const { JWT_SECRET } = require("../utils/config");
+const ConflictError = require("../errors/conflictError");
+const BadRequestError = require("../errors/badRequestError");
+const UnauthorizedError = require("../errors/unauthorizedError");
+const NotFoundError = require("../errors/notFoundError");
 
 const getUsers = (req, res, next) => {
   // if (!req.user) {
@@ -34,13 +38,15 @@ const createUser = (req, res, next) => {
     })
     .catch((err) => {
       if (err.code === 11000) {
-        return res.status(409).send({ message: "Email already used" });
+        // return res.status(409).send({ message: "Email already used" });
+        next(new ConflictError("Email already used"));
       }
 
       if (err.name === "ValidationError") {
-        return res
-          .status(400)
-          .send({ message: "400 Bad Request when creating a user" });
+        // return res
+        //   .status(400)
+        //   .send({ message: "400 Bad Request when creating a user" });
+        next(new BadRequestError("Bad Request when creating a user"));
       }
 
       return res
@@ -51,9 +57,10 @@ const createUser = (req, res, next) => {
 
 const getCurrentUser = (req, res, next) => {
   if (!req.user) {
-    return res
-      .status(401)
-      .send({ message: "Authorization required, first log in" });
+    // return res
+    //   .status(401)
+    //   .send({ message: "Authorization required, first log in" });
+    next(new UnauthorizedError("Authorization required, first log in"));
   }
   const { _id: userId } = req.user;
   console.log("req.user", req.user);
@@ -63,7 +70,8 @@ const getCurrentUser = (req, res, next) => {
       // .orFail()
       .then((user) => {
         if (!user) {
-          return res.status(404).send({ message: "User not found" });
+          // return res.status(404).send({ message: "User not found" });
+          next(new NotFoundError("User not found"));
         }
         return res.status(200).send(user);
       })
@@ -74,9 +82,12 @@ const getCurrentUser = (req, res, next) => {
         // }
 
         if (err.name === "CastError") {
-          return res
-            .status(400)
-            .send({ message: `Bad Request  -- Cast Error when getUserById` });
+          // return res
+          //   .status(400)
+          //   .send({ message: `Bad Request  -- Cast Error when getUserById` });
+          next(
+            new BadRequestError("Bad Request  -- Cast Error when getUserById")
+          );
         }
 
         return res
