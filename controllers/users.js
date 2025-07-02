@@ -100,9 +100,10 @@ const getCurrentUser = (req, res, next) => {
 const login = (req, res, next) => {
   const { email, password } = req.body;
   if (!email || !password) {
-    return res
-      .status(400)
-      .send({ message: "Both email and password are required!" });
+    // return res
+    //   .status(400)
+    //   .send({ message: "Both email and password are required!" });
+    next(new BadRequestError("Both email and password are required!"));
   }
 
   return User.findUserByCredentials(email, password)
@@ -127,14 +128,20 @@ const login = (req, res, next) => {
       console.error("Login error:", err);
 
       if (err.message.includes("Incorrect email or password")) {
-        return res
-          .status(401)
-          .send({ message: "Incorrect email or password ~ 401" });
+        // return res
+        //   .status(401)
+        //   .send({ message: "Incorrect email or password ~ 401" });
+        next(
+          new UnauthorizedError(
+            "Unathorized access: Incorrect email or password ~ 401"
+          )
+        );
       }
 
-      return res
-        .status(500)
-        .send({ message: "Server error during login", error: err.message });
+      // return res
+      //   .status(500)
+      //   .send({ message: "Server error during login", error: err.message });
+      next(err);
       // next(err)
     });
 };
