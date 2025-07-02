@@ -10,6 +10,7 @@ const errorHandler = require("./middlewares/error-handler");
 
 const app = express();
 const { PORT = 3000, MONGO_URI } = process.env;
+console.log("MONGO_URI", MONGO_URI);
 
 mongoose
   .connect(MONGO_URI)
