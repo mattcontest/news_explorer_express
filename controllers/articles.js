@@ -93,7 +93,7 @@ const deleteArticle = (req, res, next) => {
         // return res
         //   .status(404)
         //   .send({ message: "Article to delete Not Found ~ 404" });
-        next(new NotFoundError("Article to delete Not Found ~ 404"));
+        return next(new NotFoundError("Article to delete Not Found ~ 404"));
       }
 
       res.status(500).send({ message: "Server error during article deletion" });
@@ -122,7 +122,7 @@ const likeArticle = (req, res, next) => {
       console.log("Check error", err);
       if (err.statusCode === 404) {
         // return res.status(404).send({ message: "Not found in the db" });
-        next(new NotFoundError("Not found in the db"));
+        return next(new NotFoundError("Not found in the db"));
       }
 
       return res
@@ -135,7 +135,7 @@ const dislikeArticle = (req, res, next) => {
   const { itemId } = req.params;
   if (!mongoose.Types.ObjectId.isValid(itemId)) {
     // return res.status(400).send({ message: "Bad Request: Invalid Format" });
-    next(new BadRequestError("Bad Request: Invalid Format"));
+    return next(new BadRequestError("Bad Request: Invalid Format"));
   }
 
   return Article.findByIdAndUpdate(
@@ -151,14 +151,14 @@ const dislikeArticle = (req, res, next) => {
         // return res
         //   .status(404)
         //   .send({ message: "Article to dislike not found" });
-        next(new NotFoundError("Article to dislike not found"));
+        return next(new NotFoundError("Article to dislike not found"));
       }
 
       if (err.name === "CastError") {
         // return res
         //   .status(400)
         //   .send({ message: "Bad Request: Cast Error when disliking an item" });
-        next(
+        return next(
           new BadRequestError("Bad Request: Cast Error when disliking an item")
         );
       }
