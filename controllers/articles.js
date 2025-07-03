@@ -13,7 +13,7 @@ const getArticles = (req, res, next) => {
     // return res
     //   .status(401)
     //   .send({ message: "Not logged in, please log in first!" });
-    next(new UnauthorizedError("Not logged in, please log in first!"));
+    return next(new UnauthorizedError("Not logged in, please log in first!"));
   }
   console.log(req.user);
   const currentUser = req.user._id;
@@ -35,7 +35,9 @@ const createArticle = (req, res, next) => {
         // return res
         //   .status(409)
         //   .send({ message: "Article already saved in your Bookmarks!" });
-        next(new ConflictError("Article already saved in your Bookmarks!"));
+        return next(
+          new ConflictError("Article already saved in your Bookmarks!")
+        );
       }
       return Article.create({
         keyword,
@@ -53,7 +55,7 @@ const createArticle = (req, res, next) => {
       console.error(err);
       if (err.name === "ValidationError") {
         // return res.status(400).send({ message: "Invalid data" });
-        next(new BadRequestError("Invalid Data"));
+        return next(new BadRequestError("Invalid Data"));
       }
 
       return res.status(500).send({ message: "Internal server error" });
@@ -70,7 +72,7 @@ const deleteArticle = (req, res, next) => {
         // return res
         //   .status(403)
         //   .send({ message: "Unauthorized to delete this article" });
-        next(new ForbiddenError("Unauthorized to delete this article"));
+        return next(new ForbiddenError("Unauthorized to delete this article"));
       }
 
       return Article.deleteOne({ _id: articleId })
@@ -84,7 +86,7 @@ const deleteArticle = (req, res, next) => {
 
       if (err.name === "CastError") {
         // return res.status(400).send({ message: "Invalid Article Parameter" });
-        next(new BadRequestError("Invalid Article Parameter"));
+        return next(new BadRequestError("Invalid Article Parameter"));
       }
 
       if (err.name === "DocumentNotFoundError") {

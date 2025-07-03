@@ -60,7 +60,7 @@ const getCurrentUser = (req, res, next) => {
     // return res
     //   .status(401)
     //   .send({ message: "Authorization required, first log in" });
-    next(new UnauthorizedError("Authorization required, first log in"));
+    return next(new UnauthorizedError("Authorization required, first log in"));
   }
   const { _id: userId } = req.user;
   console.log("req.user", req.user);
@@ -141,7 +141,7 @@ const login = (req, res, next) => {
       // return res
       //   .status(500)
       //   .send({ message: "Server error during login", error: err.message });
-      next(err);
+      return next(err);
       // next(err)
     });
 };
