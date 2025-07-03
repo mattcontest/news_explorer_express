@@ -39,14 +39,14 @@ const createUser = (req, res, next) => {
     .catch((err) => {
       if (err.code === 11000) {
         // return res.status(409).send({ message: "Email already used" });
-        next(new ConflictError("Email already used"));
+        return next(new ConflictError("Email already used"));
       }
 
       if (err.name === "ValidationError") {
         // return res
         //   .status(400)
         //   .send({ message: "400 Bad Request when creating a user" });
-        next(new BadRequestError("Bad Request when creating a user"));
+        return next(new BadRequestError("Bad Request when creating a user"));
       }
 
       return res
@@ -71,7 +71,7 @@ const getCurrentUser = (req, res, next) => {
       .then((user) => {
         if (!user) {
           // return res.status(404).send({ message: "User not found" });
-          next(new NotFoundError("User not found"));
+          return next(new NotFoundError("User not found"));
         }
         return res.status(200).send(user);
       })
@@ -85,7 +85,7 @@ const getCurrentUser = (req, res, next) => {
           // return res
           //   .status(400)
           //   .send({ message: `Bad Request  -- Cast Error when getUserById` });
-          next(
+          return next(
             new BadRequestError("Bad Request  -- Cast Error when getUserById")
           );
         }
@@ -103,7 +103,7 @@ const login = (req, res, next) => {
     // return res
     //   .status(400)
     //   .send({ message: "Both email and password are required!" });
-    next(new BadRequestError("Both email and password are required!"));
+    return next(new BadRequestError("Both email and password are required!"));
   }
 
   return User.findUserByCredentials(email, password)
@@ -131,7 +131,7 @@ const login = (req, res, next) => {
         // return res
         //   .status(401)
         //   .send({ message: "Incorrect email or password ~ 401" });
-        next(
+        return next(
           new UnauthorizedError(
             "Unathorized access: Incorrect email or password ~ 401"
           )
