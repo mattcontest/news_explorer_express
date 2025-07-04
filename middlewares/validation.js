@@ -1,12 +1,12 @@
 const { Joi, celebrate } = require("celebrate");
-// const validator = require("validator");
+const validator = require("validator");
 
-// const validateUrl = (value, helpers) => {
-//   if (validator.isURL(value)) {
-//     return value;
-//   }
-//   return helpers.error("string.uri");
-// };
+const validateUrl = (value, helpers) => {
+  if (validator.isURL(value)) {
+    return value;
+  }
+  return helpers.error("string.uri");
+};
 
 const validateAuthentication = celebrate({
   body: Joi.object().keys({
@@ -44,8 +44,34 @@ const validateLogin = celebrate({
   }),
 });
 
+const validateArticle = celebrate({
+  body: Joi.object().keys({
+    keyword: Joi.string().required(),
+    title: Joi.string().required(),
+    date: Joi.string().required(),
+    source: Joi.string().required().messages({
+      "string.empty": "The 'source' must be filled in",
+    }),
+    link: Joi.string().required().custom(validateUrl).messages({
+      "string.empty": "The 'link' field must be filled in",
+      "string.uri": "The 'link' must be a valid URL",
+    }),
+    image: Joi.string().required().custom(validateUrl).messages({
+      "string.empty": "The 'image' field must be filled in",
+      "string.uri": "The 'image' must be a valid URL",
+    }),
+    text: Joi.string().required().messages({
+      "string.empty": "The 'text' field must be filled in",
+    }),
+    owner: Joi.string().required().messages({
+      "string.empty": "The 'owner' field must be filled in",
+    }),
+  }),
+});
+
 module.exports = {
   validateAuthentication,
   validateUserBody,
   validateLogin,
+  validateArticle,
 };
