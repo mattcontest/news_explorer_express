@@ -58,7 +58,9 @@ const createArticle = (req, res, next) => {
         return next(new BadRequestError("Invalid Data"));
       }
 
-      return res.status(500).send({ message: "Internal server error" });
+      // return res.status(500).send({ message: "Internal server error" });
+      // return next(new Error("Internal server error"));
+      return next(err);
     });
 };
 
@@ -129,9 +131,10 @@ const likeArticle = (req, res, next) => {
         return next(new NotFoundError("Not found in the db"));
       }
 
-      return res
-        .status(500)
-        .send({ message: "Server Error while liking article" });
+      // return res
+      //   .status(500)
+      //   .send({ message: "Server Error while liking article" });
+      return next(err);
     });
 };
 
@@ -166,9 +169,11 @@ const dislikeArticle = (req, res, next) => {
           new BadRequestError("Bad Request: Cast Error when disliking an item")
         );
       }
-      return res
-        .status(500)
-        .send({ message: "500 Server Error when deleting an  Item" });
+
+      // return res
+      //   .status(500)
+      //   .send({ message: "500 Server Error when deleting an  Item" });
+      return next(err);
     });
 };
 module.exports = {
