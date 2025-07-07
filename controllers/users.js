@@ -65,36 +65,34 @@ const getCurrentUser = (req, res, next) => {
   const { _id: userId } = req.user;
   console.log("req.user", req.user);
   console.log("Req.params current user", userId);
-  return (
-    User.findById(userId)
-      // .orFail()
-      .then((user) => {
-        if (!user) {
-          // return res.status(404).send({ message: "User not found" });
-          return next(new NotFoundError("User not found"));
-        }
-        return res.status(200).send(user);
-      })
+  return User.findById(userId)
+    .orFail(new NotFoundError("User not found"))
+    .then((user) => {
+      // if (!user) {
+      //   // return res.status(404).send({ message: "User not found" });
+      //   return next(new NotFoundError("User not found"));
+      // }
+      return res.status(200).send(user);
+    })
 
-      .catch((err) => {
-        // if (res.headerSent) {
-        //   return;
-        // }
+    .catch((err) => {
+      // if (res.headerSent) {
+      //   return;
+      // }
 
-        if (err.name === "CastError") {
-          // return res
-          //   .status(400)
-          //   .send({ message: `Bad Request  -- Cast Error when getUserById` });
-          return next(
-            new BadRequestError("Bad Request  -- Cast Error when getUserById")
-          );
-        }
+      if (err.name === "CastError") {
+        // return res
+        //   .status(400)
+        //   .send({ message: `Bad Request  -- Cast Error when getUserById` });
+        return next(
+          new BadRequestError("Bad Request  -- Cast Error when getUserById")
+        );
+      }
 
-        return res
-          .status(500)
-          .send({ message: "500 Server Error when attempting to getUserById" });
-      })
-  );
+      return res
+        .status(500)
+        .send({ message: "500 Server Error when attempting to getUserById" });
+    });
 };
 
 const login = (req, res, next) => {

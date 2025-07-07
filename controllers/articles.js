@@ -66,7 +66,7 @@ const deleteArticle = (req, res, next) => {
   const { articleId } = req.params;
   console.log("ArticleId", articleId);
   Article.findOne({ _id: articleId })
-    .orFail()
+    .orFail(new NotFoundError("Article to delete Not Found ~404"))
     .then((article) => {
       if (article.owner.toString() !== req.user._id) {
         // return res
@@ -75,28 +75,32 @@ const deleteArticle = (req, res, next) => {
         return next(new ForbiddenError("Unauthorized to delete this article"));
       }
 
-      return Article.deleteOne({ _id: articleId })
-        .orFail()
-        .then(() => {
-          res.status(200).send({ data: article });
-        });
+      return Article.deleteOne({ _id: articleId }).then((result) => {
+        if (result.deletedCount === 0) {
+          throw new NotFoundError("Article Not Found!");
+        }
+        res.status(200).send({ data: article });
+      });
     })
     .catch((err) => {
       console.error("Error deleting article", err);
 
       if (err.name === "CastError") {
+        // invalid Mongo ID format → BadRequest 400
+
         // return res.status(400).send({ message: "Invalid Article Parameter" });
         return next(new BadRequestError("Invalid Article Parameter"));
       }
 
-      if (err.name === "DocumentNotFoundError") {
-        // return res
-        //   .status(404)
-        //   .send({ message: "Article to delete Not Found ~ 404" });
-        return next(new NotFoundError("Article to delete Not Found ~ 404"));
-      }
+      // if (err.name === "DocumentNotFoundError") {
+      //   // return res
+      //   //   .status(404)
+      //   //   .send({ message: "Article to delete Not Found ~ 404" });
+      //   return next(new NotFoundError("Article to delete Not Found ~ 404"));
+      // }
 
-      res.status(500).send({ message: "Server error during article deletion" });
+      // res.status(500).send({ message: "Server error during article deletion" });
+      return next(err);
     });
 };
 
