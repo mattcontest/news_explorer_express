@@ -69,9 +69,16 @@ const validateArticle = celebrate({
   }),
 });
 
+const validateArticleId = celebrate({
+  params: Joi.object().keys({
+    articleId: Joi.string().hex().required(),
+  }),
+});
+
 module.exports = {
   validateAuthentication,
   validateUserBody,
   validateLogin,
   validateArticle,
+  validateArticleId,
 };
