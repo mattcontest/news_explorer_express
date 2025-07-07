@@ -67,13 +67,15 @@ const getCurrentUser = (req, res, next) => {
   console.log("Req.params current user", userId);
   return User.findById(userId)
     .orFail(new NotFoundError("User not found"))
-    .then((user) => {
+    .then(
+      (user) => res.status(200).send(user)
+      // {
       // if (!user) {
       //   // return res.status(404).send({ message: "User not found" });
       //   return next(new NotFoundError("User not found"));
       // }
-      return res.status(200).send(user);
-    })
+      // }
+    )
 
     .catch((err) => {
       // if (res.headerSent) {
