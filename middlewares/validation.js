@@ -63,7 +63,8 @@ const validateArticle = celebrate({
     text: Joi.string().required().messages({
       "string.empty": "The 'text' field must be filled in",
     }),
-    owner: Joi.string().required().messages({
+
+    owner: Joi.string().messages({
       "string.empty": "The 'owner' field must be filled in",
     }),
   }),
