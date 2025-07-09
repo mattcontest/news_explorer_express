@@ -16,7 +16,7 @@ router.get("/", getArticles);
 router.delete("/:articleId", validateArticleId, deleteArticle);
 router.put("/:articleId/likes", validateArticle, likeArticle);
 //  But instead this?
-router.post("/", createArticle);
+router.post("/", validateArticleId, createArticle);
 // router.delete("/:articleId/likes", dislikeArticle);
 
 module.exports = router;
