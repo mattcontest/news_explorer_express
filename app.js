@@ -9,7 +9,9 @@ const { requestLogger, errorLogger } = require("./middlewares/logger");
 const errorHandler = require("./middlewares/error-handler");
 
 const app = express();
-const { PORT = 3000, MONGO_URI } = process.env;
+const { PORT = 3000, MONGO_URI = "mongodb://127.0.0.1:27017/newsexplorer_db" } =
+  process.env;
+
 console.log("MONGO_URI", MONGO_URI);
 
 mongoose
