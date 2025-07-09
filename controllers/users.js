@@ -17,9 +17,11 @@ const getUsers = (req, res, next) => {
     })
     .catch((err) => {
       console.error(err);
-      return res.status(500).send({
-        message: "500 Server Error when attempting downloading users",
-      });
+      return next(err);
+
+      // return res.status(500).send({
+      //   message: "500 Server Error when attempting downloading users",
+      // });
     });
 };
 
@@ -49,9 +51,10 @@ const createUser = (req, res, next) => {
         return next(new BadRequestError("Bad Request when creating a user"));
       }
 
-      return res
-        .status(500)
-        .send({ message: "500 Server Error when creating  a user" });
+      return next(err);
+      // res
+      //   .status(500)
+      //   .send({ message: "500 Server Error when creating  a user" });
     });
 };
 
@@ -91,9 +94,10 @@ const getCurrentUser = (req, res, next) => {
         );
       }
 
-      return res
-        .status(500)
-        .send({ message: "500 Server Error when attempting to getUserById" });
+      return next(err);
+      // res
+      //   .status(500)
+      //   .send({ message: "500 Server Error when attempting to getUserById" });
     });
 };
 

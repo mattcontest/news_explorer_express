@@ -21,7 +21,10 @@ const getArticles = (req, res, next) => {
   return Article.find({ owner: currentUser })
     .populate("owner")
     .then((article) => res.status(200).send({ data: article }))
-    .catch(() => res.status(500).send({ message: "404 Articels not found" }));
+    .catch(() =>
+      //  res.status(500).send({ message: "404 Articels not found" })
+      next(err)
+    );
 };
 
 const createArticle = (req, res, next) => {
