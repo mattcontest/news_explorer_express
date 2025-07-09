@@ -22,6 +22,8 @@ router.use("/users", userRouter);
 router.use("/articles", articleRouter);
 // router.use("/api", newsRoutes);
 
-router.use((req, res, next) => next(NotFoundError("Resource Not Found 404")));
+router.use((req, res, next) =>
+  next(new NotFoundError("Resource Not Found 404"))
+);
 
 module.exports = router;
